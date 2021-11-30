@@ -1,4 +1,4 @@
-# Advent of Code 2020
+# Advent of Code
 
 Just my personal repo documenting my participation in this event!
 
