@@ -1,23 +1,26 @@
+import copy
+
+
 def partOne():
-    data = getParsedInputData()
-    rows = data.split("\n")
+    rows = getParsedInputData()
 
-    for i, row in enumerate(rows):
-        rows[i] = list(rows[i])
+    formattedRows = []
+    for row in rows:
+        formattedRows.append(list(row))
 
-    fillSeats(rows)
+    fillSeats(formattedRows)
 
 
 def fillSeats(rows):
     count = 0
-    newRows = rows.copy()
+    newRows = copy.deepcopy(rows)
     while True:
         for i, row in enumerate(rows):
             for j, seat in enumerate(row):
                 nearBySeats = getNearbySeats(i, j, rows)
                 if seat == "L" and nearBySeats.count("#") == 0:
                     newRows[i][j] = "#"
-                elif seat == "#" and nearBySeats.count("#") > 3:
+                elif seat == "#" and nearBySeats.count("#") >= 4:
                     newRows[i][j] = "L"
 
         newCount = countOccupiedSeats(newRows)
@@ -25,8 +28,14 @@ def fillSeats(rows):
             print(count)
             break
         rows.clear()
-        rows = newRows.copy()
+        rows = copy.deepcopy(newRows)
         count = newCount
+
+
+def printWaitingArea(rows):
+    for row in rows:
+        print(''.join(row))
+    print()
 
 
 def countOccupiedSeats(rows):
@@ -38,37 +47,38 @@ def countOccupiedSeats(rows):
 
 def getNearbySeats(i, j, rows):
     try:
-        uL = rows[i - 1][j - 1]
+        uL = rows[i - 1][j - 1] if j > 0 and i > 0 else "x"
     except IndexError:
-        uL = ""
+        print("out of range")
+        uL = "x"
     try:
-        u = rows[i - 1][j]
+        u = rows[i - 1][j] if i > 0 else "x"
     except IndexError:
-        u = ""
+        u = "x"
     try:
-        uR = rows[i - 1][j + 1]
+        uR = rows[i - 1][j + 1] if i > 0 else "x"
     except IndexError:
-        uR = ""
+        uR = "x"
     try:
-        b = rows[i][j - 1]
+        b = rows[i][j - 1] if j > 0 else "x"
     except IndexError:
-        b = ""
+        b = "x"
     try:
         a = rows[i][j + 1]
     except IndexError:
-        a = ""
+        a = "x"
     try:
-        dL = rows[i + 1][j - 1]
+        dL = rows[i + 1][j - 1] if j > 0 else "x"
     except IndexError:
-        dL = ""
+        dL = "x"
     try:
         d = rows[i + 1][j]
     except IndexError:
-        d = ""
+        d = "x"
     try:
         dR = rows[i + 1][j + 1]
     except IndexError:
-        dR = ""
+        dR = "x"
 
     return [uL, u, uR, b, a, dL, d, dR]
 
@@ -81,16 +91,13 @@ def partTwo():
     data = getParsedInputData()
 
 
-def getParsedInputData(inputData="input2.txt"):
+def getParsedInputData(inputData="input.txt"):
     with open(inputData) as file:
-        data = file.read()
+        data = file.read().splitlines()
     file.close()
-
     # Do some logic
-
     return data
 
 
 partOne()
 partTwo()
-
