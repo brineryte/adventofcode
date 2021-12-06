@@ -1,8 +1,3 @@
-import math
-
-from numpy.ma import absolute
-
-
 def printGrid(grid):
     for row in grid:
         for item in row:
@@ -19,17 +14,7 @@ def countOverlaps(grid):
     return count
 
 
-with open('../inputs/input5.txt') as f:
-    lines = f.read().splitlines()
-
-    segments = []
-    for line in lines:
-        coords = line.replace(' ', '').split('->')
-        segments.append([int(x) for x in coords[0].split(',')] + [int(x) for x in coords[1].split(',')])
-        # # only consider horizontal/vertical
-        # if start[0] == end[0] or start[1] == end[1]:
-        #     print(start, end)
-
+def findVents(segments, diagonal=True):
     gridSize = max([max(x) for x in segments]) + 1
 
     grid = []
@@ -38,9 +23,7 @@ with open('../inputs/input5.txt') as f:
         for j in range(gridSize):
             grid[i].append('.')
 
-    # horizontal/vertical only
-    #for segment in filter(lambda val: val[0] == val[2] or val[1] == val[3], segments):
-    for segment in segments:
+    for segment in segments if diagonal else filter(lambda val: val[0] == val[2] or val[1] == val[3], segments):
         x1, y1, x2, y2 = segment
 
         if x1 > x2:
@@ -60,8 +43,6 @@ with open('../inputs/input5.txt') as f:
         for y in yDist:
             yCoords.append(y)
 
-        print(xCoords, yCoords)
-
         if len(xCoords) > 1 and len(yCoords) > 1:
             for i, x in enumerate(xCoords):
                 if grid[x][yCoords[i]] == '.':
@@ -77,6 +58,36 @@ with open('../inputs/input5.txt') as f:
                 if grid[xCoords[0]][y] == '.':
                     grid[xCoords[0]][y] = 0
                 grid[xCoords[0]][y] += 1
+    return grid
 
-    printGrid(grid)
-    print('part one:', countOverlaps(grid))
+
+def partOne():
+    with open('../inputs/input5.txt') as f:
+        lines = f.read().splitlines()
+
+        segments = []
+        for line in lines:
+            coords = line.replace(' ', '').split('->')
+            segments.append([int(x) for x in coords[0].split(',')] + [int(x) for x in coords[1].split(',')])
+
+        grid = findVents(segments, diagonal=False)
+
+        print('part one:', countOverlaps(grid))
+
+
+def partTwo():
+    with open('../inputs/input5.txt') as f:
+        lines = f.read().splitlines()
+
+        segments = []
+        for line in lines:
+            coords = line.replace(' ', '').split('->')
+            segments.append([int(x) for x in coords[0].split(',')] + [int(x) for x in coords[1].split(',')])
+
+        grid = findVents(segments)
+
+        print('part two:', countOverlaps(grid))
+
+
+partOne()
+partTwo()
